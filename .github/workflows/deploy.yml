@@ -1,0 +1,29 @@
+name: Deploy Chat Application
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+
+jobs:
+  trigger-portainer-deploy: # Changed job name as we're not building/pushing to Docker Hub here
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      # While not strictly necessary for just triggering a webhook,
+      # it's good practice to check out the code to ensure the workflow is valid.
+      # If your webhook logic in Portainer *also* needs the commit SHA or other info, this is useful.
+
+    - name: Trigger Portainer Stack Update
+      # This step assumes you have configured a stack in Portainer using Git repository
+      # and enabled "Automatic Updates" which provides a webhook URL.
+      # Go to your Portainer stack -> "Automatic updates" section to get this URL.
+      # Store the webhook URL as a GitHub Secret named PORTAINER_CHAT_APP_WEBHOOK.
+      env:
+        PORTAINER_WEBHOOK_URL: ${{ secrets.PORTAINER_CHAT_APP_WEBHOOK }}
+      run: |
+        echo "Triggering Portainer deployment webhook..."
+        curl -X POST "$PORTAINER_WEBHOOK_URL"
+        echo "Portainer webhook triggered."
