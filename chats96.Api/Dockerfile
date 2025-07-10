@@ -6,7 +6,7 @@ WORKDIR /src
 
 # Copy the solution file first. Use the exact casing from your file system.
 # Your screenshot shows 'chats.sln' in lowercase.
-COPY ["chats.sln", "."]
+COPY ["chats96.sln", "."]
 
 # Copy the project file(s) for dependency restoration.
 # Path is relative to the CHATS96 root.
@@ -14,7 +14,7 @@ COPY ["chats96.Api/chats96.Api.csproj", "chats96.Api/"]
 
 # Restore NuGet packages for the entire solution.
 # Use the exact casing for the solution file name.
-RUN dotnet restore "chats.sln" 
+RUN dotnet restore "chats96.sln" 
 # <--- IMPORTANT: Changed to "chats.sln" (all lowercase)
 
 # Copy all the remaining project files for chats96.Api.
