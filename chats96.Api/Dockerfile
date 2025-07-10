@@ -5,7 +5,8 @@ WORKDIR /src
 # Copy the .csproj file first to leverage Docker layer caching
 # The 'context' for this build is already 'chats96.Api/'
 # So, 'chats96.Api.csproj' is directly at the root of the context.
-COPY ["chats96.Api.csproj", "."] # This copies chats96.Api/chats96.Api.csproj to /src/
+COPY ["chats96.Api.csproj", "."] 
+# This copies chats96.Api/chats96.Api.csproj to /src/
 
 # Copy all other project files and restore
 COPY . .
