@@ -1,7 +1,7 @@
 # chats96.Api/Dockerfile (Path is now relative to the CHATS96 root)
 
 # Stage 1: Build the application
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview AS final
 WORKDIR /src
 
 # Copy the solution file first. Use the exact casing from your file system.
