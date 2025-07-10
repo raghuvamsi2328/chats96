@@ -4,7 +4,7 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./chats96.Api # Path to your .NET API folder
+      context: ./chats96.Api
       dockerfile: Dockerfile
     ports:
       # Map an unused HOST port (e.g., 5001) to the container's internal port 80
