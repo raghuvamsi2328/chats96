@@ -1,30 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/Users/thammalalar/Documents/chats96/chats96.Api/chats96.Api.csproj": {}
+    "/Users/thammalalar/Documents/new111/chats96/chats96.Api/chats96.Api.csproj": {}
   },
   "projects": {
-    "/Users/thammalalar/Documents/chats96/chats96.Api/chats96.Api.csproj": {
+    "/Users/thammalalar/Documents/new111/chats96/chats96.Api/chats96.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/thammalalar/Documents/chats96/chats96.Api/chats96.Api.csproj",
+        "projectUniqueName": "/Users/thammalalar/Documents/new111/chats96/chats96.Api/chats96.Api.csproj",
         "projectName": "chats96.Api",
-        "projectPath": "/Users/thammalalar/Documents/chats96/chats96.Api/chats96.Api.csproj",
+        "projectPath": "/Users/thammalalar/Documents/new111/chats96/chats96.Api/chats96.Api.csproj",
         "packagesPath": "/Users/thammalalar/.nuget/packages/",
-        "outputPath": "/Users/thammalalar/Documents/chats96/chats96.Api/obj/",
+        "outputPath": "/Users/thammalalar/Documents/new111/chats96/chats96.Api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/thammalalar/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -41,12 +41,12 @@
         "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[9.0.4, )"
+              "version": "[8.0.4, )"
             },
             "Microsoft.AspNetCore.SignalR": {
               "target": "Package",

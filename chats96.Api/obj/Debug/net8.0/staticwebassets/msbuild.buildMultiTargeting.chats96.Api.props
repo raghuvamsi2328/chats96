@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/chats96.Api.props" />
+</Project>

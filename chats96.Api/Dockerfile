@@ -1,39 +1,20 @@
-# chats96.Api/Dockerfile (Path is now relative to the CHATS96 root)
-
-# Stage 1: Build the application
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview AS final
+# 👷 Stage 1: Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-
-# Copy the solution file first. Use the exact casing from your file system.
-# Your screenshot shows 'chats.sln' in lowercase.
 COPY ["chats96.sln", "."]
-
-# Copy the project file(s) for dependency restoration.
-# Path is relative to the CHATS96 root.
-RUN apt-get update && apt-get install -y ca-certificates
 COPY ["chats96.Api/chats96.Api.csproj", "chats96.Api/"]
-
-# Restore NuGet packages for the entire solution.
-# Use the exact casing for the solution file name.
+RUN apt-get update && apt-get install -y ca-certificates
 RUN dotnet restore "chats96.sln" --verbosity detailed
-# <--- IMPORTANT: Changed to "chats96.sln" (all lowercase)
-
-# Copy all the remaining project files for chats96.Api.
 COPY chats96.Api/. chats96.Api/
-
-# Build the application
-# Specify the project path relative to the WORKDIR /src
 RUN dotnet build "chats96.Api/chats96.Api.csproj" -c Release -o /app/build
 
-# Stage 2: Publish the application
+# 🚀 Stage 2: Publish
 FROM build AS publish
-# Publish the specific project from the solution
 RUN dotnet publish "chats96.Api/chats96.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Stage 3: Create the final runtime image
+# 🌐 Stage 3: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
 EXPOSE 80
 ENTRYPOINT ["dotnet", "chats96.Api.dll"]
