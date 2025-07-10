@@ -4,7 +4,7 @@ WORKDIR /src
 COPY ["chats96.sln", "."]
 COPY ["chats96.Api/chats96.Api.csproj", "chats96.Api/"]
 RUN apt-get update && apt-get install -y ca-certificates
-RUN dotnet restore "chats96.sln" --verbosity detailed
+RUN dotnet restore "chats96.sln"
 COPY chats96.Api/. chats96.Api/
 RUN dotnet build "chats96.Api/chats96.Api.csproj" -c Release -o /app/build
 
