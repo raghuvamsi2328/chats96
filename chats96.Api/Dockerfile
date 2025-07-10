@@ -1,49 +1,38 @@
-# chats96.Api/Dockerfile
+# chats96.Api/Dockerfile (Path is now relative to the CHATS96 root)
 
 # Stage 1: Build the application
-# Use the SDK image for building and restoring NuGet packages
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# Set the working directory inside the container for this stage
 WORKDIR /src
 
-# Copy the .csproj file first to leverage Docker layer caching.
-# Since the build context is 'chats96.Api', 'chats96.Api.csproj' is directly available.
-COPY ["chats96.Api.csproj", "."]
+# Copy the solution file first. Use the exact casing from your file system.
+# Your screenshot shows 'chats.sln' in lowercase.
+COPY ["chats.sln", "."]
 
-# Restore NuGet packages. This step runs only if csproj or restore settings change.
-RUN dotnet restore "chats96.Api.csproj"
+# Copy the project file(s) for dependency restoration.
+# Path is relative to the CHATS96 root.
+COPY ["chats96.Api/chats96.Api.csproj", "chats96.Api/"]
 
-# Copy the rest of the application's source code into the working directory.
-# The first '.' refers to the current build context (./chats96.Api on your host).
-# The second '.' refers to the WORKDIR /src inside the container.
-COPY . .
+# Restore NuGet packages for the entire solution.
+# Use the exact casing for the solution file name.
+RUN dotnet restore "chats.sln" 
+# <--- IMPORTANT: Changed to "chats.sln" (all lowercase)
 
-# Build the application in Release configuration
-RUN dotnet build "chats96.Api.csproj" -c Release -o /app/build
+# Copy all the remaining project files for chats96.Api.
+COPY chats96.Api/. chats96.Api/
+
+# Build the application
+# Specify the project path relative to the WORKDIR /src
+RUN dotnet build "chats96.Api/chats96.Api.csproj" -c Release -o /app/build
 
 # Stage 2: Publish the application
-# Use the 'build' stage as the base for this stage
 FROM build AS publish
-
-# Publish the application for deployment.
-# It creates a self-contained deployment in /app/publish
-RUN dotnet publish "chats96.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+# Publish the specific project from the solution
+RUN dotnet publish "chats96.Api/chats96.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Stage 3: Create the final runtime image
-# Use the ASP.NET runtime image, which is lighter than the SDK image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
-
-# Set the working directory in the final image
 WORKDIR /app
-
-# Copy the published application files from the 'publish' stage to the final image
 COPY --from=publish /app/publish .
 
-# Expose port 80. This tells Docker that the container listens on this port.
-# Nginx Proxy Manager will forward to this internal container port.
 EXPOSE 80
-
-# Define the entry point for the container.
-# This command will be executed when the container starts.
 ENTRYPOINT ["dotnet", "chats96.Api.dll"]

@@ -1,21 +1,20 @@
-# docker-compose.yml (for your chats96 application)
+# docker-compose.yml
 version: '3.8'
 
 services:
   backend:
     build:
-      context: ./chats96.Api
-      dockerfile: Dockerfile
+      context: . # <--- IMPORTANT CHANGE: Set context to the root of your project (CHATS96 folder)
+      dockerfile: chats96.Api/Dockerfile # <--- IMPORTANT CHANGE: Specify the path to the Dockerfile
     ports:
-      # Map an unused HOST port (e.g., 5001) to the container's internal port 80
-      - "5001:80" # This port will be used by NPM to talk to your backend
+      - "5001:80"
     environment:
-      ASPNETCORE_ENVIRONMENT: Production # Or 'Development' if you want Swagger publicly accessible
+      ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__DefaultConnection: "Host=database;Port=5432;Username=chatuser;Password=chatpassword;Database=chatdb"
     depends_on:
       - database
     networks:
-      - chat-network # Keep this for internal app communication (backend <-> db)
+      - chat-network
     restart: unless-stopped
 
   frontend:
