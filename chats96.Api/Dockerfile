@@ -10,12 +10,13 @@ COPY ["chats96.sln", "."]
 
 # Copy the project file(s) for dependency restoration.
 # Path is relative to the CHATS96 root.
+RUN apt-get update && apt-get install -y ca-certificates
 COPY ["chats96.Api/chats96.Api.csproj", "chats96.Api/"]
 
 # Restore NuGet packages for the entire solution.
 # Use the exact casing for the solution file name.
-RUN dotnet restore "chats96.sln" 
-# <--- IMPORTANT: Changed to "chats.sln" (all lowercase)
+RUN dotnet restore "chats96.sln" --verbosity detailed
+# <--- IMPORTANT: Changed to "chats96.sln" (all lowercase)
 
 # Copy all the remaining project files for chats96.Api.
 COPY chats96.Api/. chats96.Api/
