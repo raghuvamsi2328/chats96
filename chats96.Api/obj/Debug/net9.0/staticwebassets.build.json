@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "IvzmzlQSYfdr8KsFTWaDotsqAr891bZfjm+eNYqBpPI=",
+  "Source": "chats96.Api",
+  "BasePath": "_content/chats96.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

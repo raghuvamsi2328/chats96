@@ -1,0 +1,90 @@
+/* You can add global styles to this file, and also import other style files */
+/* Base styles - apply to all themes */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light Theme Variables */
+body.light-theme {
+  --background-color: #f0f2f5; /* Overall page background */
+  --background-card: #ffffff; /* Card/container background */
+  --background-secondary: #f9f9f9; /* Chat window background */
+  --background-chat: #f5f7fa; /* Messages display background */
+  --input-area-background: #ffffff; /* Message input background */
+  --message-background: #e0e0e0; /* Default message background */
+
+  --text-color: #333333;
+  --primary-color: #007bff;
+  --primary-hover-color: #0056b3;
+  --sender-color: #0056b3;
+  --timestamp-color: #777777;
+
+  --border-color: #dddddd;
+  --input-background: #ffffff;
+
+  --button-background: #f0f0f0;
+  --button-text: #333333;
+  --button-border: #cccccc;
+  --button-hover-background: #e0e0e0;
+
+  --share-button-background: #28a745; /* Green */
+  --share-button-text: #ffffff;
+  --share-button-border: #218838;
+  --share-button-hover-background: #218838;
+
+  --disabled-background: #cccccc;
+  --error-color: #dc3545;
+  --error-background: #f8d7da;
+  --error-border: #f5c6cb;
+}
+
+/* Dark Theme Variables */
+body.dark-theme {
+  --background-color: #212121;
+  --background-card: #2f2f2f;
+  --background-secondary: #3c3c3c;
+  --background-chat: #444444;
+  --input-area-background: #2f2f2f;
+  --message-background: #555555;
+
+  --text-color: #e0e0e0;
+  --primary-color: #66b3ff;
+  --primary-hover-color: #4da6ff;
+  --sender-color: #88bbff;
+  --timestamp-color: #aaaaaa;
+
+  --border-color: #555555;
+  --input-background: #3c3c3c;
+
+  --button-background: #4a4a4a;
+  --button-text: #e0e0e0;
+  --button-border: #666666;
+  --button-hover-background: #5a5a5a;
+
+  --share-button-background: #1e7e34; /* Darker Green */
+  --share-button-text: #ffffff;
+  --share-button-border: #17642a;
+  --share-button-hover-background: #17642a;
+
+  --disabled-background: #555555;
+  --error-color: #ff8888;
+  --error-background: #5c2020;
+  --error-border: #802f2f;
+}
+
+/* General button styling */
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+/* Basic body background from theme */
+body {
+  background-color: var(--background-color);
+}

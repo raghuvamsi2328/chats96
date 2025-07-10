@@ -1,0 +1,135 @@
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--background-card); /* Uses theme variable */
+  color: var(--text-color); /* Uses theme variable */
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.theme-toggle {
+  background-color: var(--button-background);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--button-hover-background);
+}
+
+.initial-setup {
+  text-align: center;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.input-group label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-group input[type="text"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+}
+
+.actions button {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.actions button:disabled {
+  background-color: var(--disabled-background);
+  cursor: not-allowed;
+}
+
+.actions button:hover:not(:disabled) {
+  background-color: var(--primary-hover-color);
+}
+
+.or-separator {
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.chat-area {
+  margin-top: 20px;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 15px;
+}
+
+.chat-header h2 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.chat-header p {
+  margin: 0;
+  font-style: italic;
+}
+
+.share-button {
+  background-color: var(--share-button-background);
+  color: var(--share-button-text);
+  border: 1px solid var(--share-button-border);
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.share-button:hover {
+  background-color: var(--share-button-hover-background);
+}
+
+.error-message {
+  color: var(--error-color);
+  background-color: var(--error-background);
+  border: 1px solid var(--error-border);
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 15px;
+  text-align: center;
+}

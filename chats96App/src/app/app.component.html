@@ -1,0 +1,40 @@
+<div class="container">
+  <header>
+    <h1>Simple Chat App</h1>
+    <button (click)="toggleTheme()" class="theme-toggle">
+      {{ theme() === 'light-theme' ? '☀️ Light' : '🌙 Dark' }}
+    </button>
+  </header>
+
+  <div *ngIf="!isChatActive" class="initial-setup">
+    <div class="input-group">
+      <label for="chatNameInput">Your Chat Name:</label>
+      <input id="chatNameInput" type="text" [(ngModel)]="chatName" placeholder="e.g., Anonymous Cat" required />
+    </div>
+
+    <div class="actions">
+      <button (click)="createNewChat()" [disabled]="!chatName.trim()">Create New Chat</button>
+      <p class="or-separator">OR</p>
+      <div class="input-group">
+        <label for="joinKeyInput">Join with Key:</label>
+        <input id="joinKeyInput" type="text" [ngModel]="chatRoomKey" (ngModelChange)="setChatRoomKeyManually($event)" placeholder="Paste chat room key" />
+        <button (click)="joinExistingChat()" [disabled]="!chatRoomKey || !chatName.trim()">Join Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isChatActive" class="chat-area">
+    <div class="chat-header">
+      <h2>Chat Room: {{ chatRoomKey }}</h2>
+      <p>Your Name: {{ chatName }}</p>
+      <button (click)="shareChatRoom()" class="share-button">Share Room Link</button>
+    </div>
+
+    <app-chat-window
+      [chatRoomKey]="chatRoomKey!"
+      [chatName]="chatName"
+    ></app-chat-window>
+  </div>
+
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+</div>

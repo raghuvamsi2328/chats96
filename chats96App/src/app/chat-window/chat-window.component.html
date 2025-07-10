@@ -1,0 +1,21 @@
+<div class="chat-window">
+  <div class="chat-info">
+      Active Users: {{ activeUsersInRoom }}
+  </div>
+  <div #messagesDisplay class="messages-display">
+    <div *ngFor="let msg of messages" class="message-item">
+      <span class="message-sender">{{ msg.sender }}:</span>
+      <span class="message-content">{{ msg.messageContent }}</span> <span class="message-timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+    </div>
+  </div>
+
+  <div class="message-input-area">
+    <input
+      type="text"
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+      placeholder="Type your message..."
+    />
+    <button (click)="sendMessage()" [disabled]="!newMessage.trim() || hubConnection.state !== 'Connected'">Send</button>
+  </div>
+</div>

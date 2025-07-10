@@ -1,0 +1,78 @@
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 400px; /* Fixed height for the chat area */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--background-secondary); /* Uses theme variable */
+}
+
+.messages-display {
+  flex-grow: 1; /* Takes up available vertical space */
+  overflow-y: auto; /* Scroll for messages */
+  padding: 10px;
+  background-color: var(--background-chat); /* Specific background for chat messages */
+}
+
+.message-item {
+  margin-bottom: 8px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: var(--message-background);
+  color: var(--text-color);
+  word-wrap: break-word; /* Prevents long words from breaking layout */
+}
+
+.message-sender {
+  font-weight: bold;
+  color: var(--sender-color);
+  margin-right: 5px;
+}
+
+// .message-content {
+//   /* No specific styling needed, just takes default text color */
+// }
+
+.message-timestamp {
+  font-size: 0.75em;
+  color: var(--timestamp-color);
+  float: right; /* Aligns timestamp to the right */
+  margin-left: 10px;
+}
+
+.message-input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--input-area-background);
+}
+
+.message-input-area input[type="text"] {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  margin-right: 10px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+}
+
+.message-input-area button {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.message-input-area button:hover:not(:disabled) {
+  background-color: var(--primary-hover-color);
+}
+
+.message-input-area button:disabled {
+  background-color: var(--disabled-background);
+  cursor: not-allowed;
+}
