@@ -1,5 +1,4 @@
-# This file should be in the root of your project,
-# alongside the 'chats96.Api' and 'chats96App' folders.
+# docker-compose.yml (for your chats96 application)
 version: '3.8'
 
 services:
@@ -8,15 +7,15 @@ services:
       context: ./chats96.Api # Path to your .NET API folder
       dockerfile: Dockerfile
     ports:
-      - "5000:80" # Changed from 3000 to 5000 (common for .NET Kestrel)
-                  # Access from outside: http://your-server-ip:5000
+      # Map an unused HOST port (e.g., 5001) to the container's internal port 80
+      - "5001:80" # This port will be used by NPM to talk to your backend
     environment:
-      ASPNETCORE_ENVIRONMENT: Production # <-- Set this based on your testing needs
+      ASPNETCORE_ENVIRONMENT: Production # Or 'Development' if you want Swagger publicly accessible
       ConnectionStrings__DefaultConnection: "Host=database;Port=5432;Username=chatuser;Password=chatpassword;Database=chatdb"
     depends_on:
       - database
     networks:
-      - chat-network
+      - chat-network # Keep this for internal app communication (backend <-> db)
     restart: unless-stopped
 
   frontend:
@@ -24,12 +23,12 @@ services:
       context: ./chats96App # Path to your Angular app folder
       dockerfile: Dockerfile
     ports:
-      - "4200:80" # Changed from 8080 to 4200 (common for Angular dev server, good for test)
-                  # Access from outside: http://your-server-ip:4200
+      # Map another unused HOST port (e.g., 4201) to the container's internal port 80
+      - "4201:80" # This port will be used by NPM to talk to your frontend
     depends_on:
       - backend
     networks:
-      - chat-network
+      - chat-network # Keep this for internal app communication (frontend -> backend API calls)
     restart: unless-stopped
 
   database:
@@ -39,18 +38,20 @@ services:
       POSTGRES_USER: chatuser
       POSTGRES_PASSWORD: chatpassword
     volumes:
-      - chat_db_data:/var/lib/postgresql/data
-    ports:
-      # Optional: Only expose if you need to connect from host for debugging (e.g., DBeaver)
-      # If you don't need direct host access, you can remove this line to keep 5432 free on host.
-      - "5433:5432" # Changed from 5432 to 5433
+      - chat_db_data:/var/lib/postgresql/data # Persistent storage for database data
+    # You generally don't need to expose DB to host here, unless for direct debugging
+    # If you remove it, '5432' on your host is free.
+    # If you add it for debugging, pick an unused host port, e.g., - "5433:5432"
     networks:
       - chat-network
     restart: unless-stopped
 
-volumes:
+volumes: # Define the named volume for database persistence
   chat_db_data:
 
 networks:
   chat-network:
     driver: bridge
+  # REMOVE THE NPM NETWORK DECLARATION HERE:
+  # YOUR_NPM_NETWORK_NAME:
+  #   external: true
