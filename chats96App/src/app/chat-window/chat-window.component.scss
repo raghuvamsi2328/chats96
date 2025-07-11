@@ -4,6 +4,7 @@
   flex-direction: column;
   height: 100%;
   background-color: var(--background-secondary);
+  overflow: hidden;
 }
 
 /* Status Bar */
@@ -11,6 +12,7 @@
   padding: 0.75rem 1.5rem;
   background-color: var(--background-chat);
   border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .active-users {
@@ -21,11 +23,10 @@
   color: var(--text-secondary);
 }
 
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  background-color: #4CAF50;
-  border-radius: 50%;
+.status-indicator-img {
+  width: 12px;
+  height: 12px;
+  filter: hue-rotate(120deg) brightness(1.2); /* Make it green */
   animation: pulse 2s infinite;
 }
 
@@ -46,19 +47,25 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--background-chat);
+  min-height: 0; /* Important for flex children */
 }
 
 .messages-list {
   flex: 1;
   padding: 1rem 1.5rem;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-height: 0;
+  
+  /* Better scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
   
   &::-webkit-scrollbar-track {
@@ -67,7 +74,7 @@
   
   &::-webkit-scrollbar-thumb {
     background: var(--border-color);
-    border-radius: 3px;
+    border-radius: 2px;
   }
   
   &::-webkit-scrollbar-thumb:hover {
@@ -103,6 +110,7 @@
   border: 1px solid var(--message-border, transparent);
   word-wrap: break-word;
   word-break: break-word;
+  hyphens: auto;
   
   &.own-message {
     background-color: var(--primary-color);
@@ -161,6 +169,22 @@
   background-color: var(--input-area-background);
   border-top: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  
+  /* Critical mobile fixes */
+  min-height: fit-content;
+  
+  /* Fix for mobile keyboard issues */
+  @media (max-width: 768px) {
+    position: sticky;
+    bottom: 0;
+    padding: 0.75rem 1rem;
+    
+    /* Prevent input from being hidden by virtual keyboard */
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .input-wrapper {
@@ -190,6 +214,12 @@
   min-height: 20px;
   max-height: 120px;
   
+  /* Better mobile input handling */
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  
   &::placeholder {
     color: var(--text-secondary);
   }
@@ -216,6 +246,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
   
   &:hover:not(:disabled) {
     background-color: var(--primary-hover-color);
@@ -230,8 +261,20 @@
   }
 }
 
-.send-icon {
-  font-size: 0.875rem;
+/* Send Button Icon */
+.send-icon-img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make send icon white */
+  transition: transform 0.2s ease;
+}
+
+.send-button:hover .send-icon-img {
+  transform: scale(1.1);
+}
+
+.send-button:disabled .send-icon-img {
+  opacity: 0.6;
 }
 
 /* Connection Status */
@@ -265,6 +308,10 @@
   
   .message-input-container {
     padding: 0.75rem 1rem;
+    /* Ensure it stays visible on mobile keyboards */
+    position: sticky;
+    bottom: 0;
+    background-color: var(--input-area-background);
   }
   
   .input-wrapper {
@@ -278,12 +325,32 @@
 }
 
 @media (max-width: 480px) {
+  .chat-window {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  
   .chat-status-bar {
     padding: 0.5rem 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .messages-container {
+    /* Specific mobile handling - account for status bar and input */
+    height: calc(100% - 120px); /* Adjust based on status bar + input heights */
+    overflow: hidden;
+    position: relative;
   }
   
   .messages-list {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.75rem 5rem 0.75rem; /* Extra bottom padding for input */
+    /* Important: prevent iOS bounce scrolling issues */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+    height: 100%;
+    position: relative;
   }
   
   .message-bubble {
@@ -297,5 +364,45 @@
   
   .message-input-container {
     padding: 0.75rem;
+    /* Mobile keyboard handling */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--input-area-background);
+    border-top: 1px solid var(--border-color);
+    z-index: 1000;
+  }
+  
+  .input-wrapper {
+    border-radius: 8px;
+  }
+  
+  .message-input {
+    /* Better mobile input */
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.75rem;
+  }
+  
+  .send-button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Special handling for very small screens */
+@media (max-width: 360px) {
+  .message-input-container {
+    padding: 0.5rem;
+  }
+  
+  .message-input {
+    font-size: 14px;
+    padding: 0.5rem;
+  }
+  
+  .send-button {
+    width: 36px;
+    height: 36px;
   }
 }

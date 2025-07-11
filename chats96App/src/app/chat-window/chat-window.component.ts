@@ -56,7 +56,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
 
   private scrollToBottom(): void {
     try {
-      this.messagesDisplayRef.nativeElement.scrollTop = this.messagesDisplayRef.nativeElement.scrollHeight;
+      if (this.messagesDisplayRef?.nativeElement) {
+        const element = this.messagesDisplayRef.nativeElement;
+        // Use a small timeout to ensure DOM is updated
+        setTimeout(() => {
+          element.scrollTop = element.scrollHeight;
+        }, 0);
+      }
     } catch(err) {
       // console.error('Could not scroll to bottom:', err);
     }

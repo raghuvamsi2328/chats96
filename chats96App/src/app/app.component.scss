@@ -272,11 +272,19 @@
   display: flex;
   flex-direction: column;
   height: calc(100vh - 120px);
+  min-height: 500px;
   background-color: var(--background-card);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-color);
+  position: relative;
+  
+  /* Better mobile viewport handling */
+  @supports (-webkit-touch-callout: none) {
+    height: calc(100vh - 120px);
+    height: calc(100dvh - 120px); /* Use dynamic viewport height on supported browsers */
+  }
 }
 
 .chat-top-bar {
@@ -286,6 +294,7 @@
   padding: 1rem 1.5rem;
   background-color: var(--background-secondary);
   border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
 }
 
 .room-info {
@@ -340,6 +349,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0; /* Important for flex children */
 }
 
 /* Error Toast */
@@ -375,6 +385,81 @@
   font-size: 1rem;
 }
 
+/* Image Icon Styles */
+.chat-icon-img,
+.theme-icon-img,
+.input-icon,
+.button-icon,
+.share-icon-img,
+.error-icon-img,
+.send-icon-img {
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+  transition: all 0.2s ease;
+}
+
+.chat-icon-img {
+  width: 24px;
+  height: 24px;
+  filter: var(--icon-filter, none);
+}
+
+.theme-icon-img {
+  width: 16px;
+  height: 16px;
+  filter: var(--icon-filter, none);
+}
+
+.input-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  filter: var(--icon-filter, none);
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1); /* Make icons white */
+}
+
+.share-icon-img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make icons white */
+}
+
+.error-icon-img {
+  width: 16px;
+  height: 16px;
+  filter: var(--error-icon-filter, none);
+}
+
+.send-icon-img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1); /* Make send icon white */
+}
+
+/* Theme-based icon filtering */
+body.light-theme {
+  --icon-filter: none;
+  --error-icon-filter: none;
+}
+
+body.dark-theme {
+  --icon-filter: brightness(0) invert(1);
+  --error-icon-filter: brightness(1.2) contrast(1.2);
+}
+
+/* Hover effects for interactive icons */
+.theme-toggle:hover .theme-icon-img,
+.share-button:hover .share-icon-img,
+.send-button:hover .send-icon-img {
+  transform: scale(1.1);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-content {
@@ -390,7 +475,8 @@
   }
   
   .main-content {
-    padding: 1rem;
+    padding: 0.5rem;
+    height: calc(100vh - 80px);
   }
   
   .welcome-card {
@@ -406,12 +492,28 @@
   }
   
   .chat-interface {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 80px);
+    min-height: calc(100vh - 80px);
     border-radius: 12px;
+    overflow: hidden;
+    
+    /* Better mobile viewport handling */
+    @supports (-webkit-touch-callout: none) {
+      height: calc(100vh - 80px);
+      height: calc(100dvh - 80px); /* Dynamic viewport height for mobile */
+      min-height: 400px;
+    }
+    
+    /* Handle mobile keyboards */
+    @media (max-height: 600px) {
+      height: calc(100vh - 60px);
+      min-height: 300px;
+    }
   }
   
   .chat-top-bar {
     padding: 0.75rem 1rem;
+    flex-shrink: 0;
   }
   
   .room-details h3 {
@@ -423,19 +525,27 @@
   }
   
   .error-toast {
-    right: 1rem;
-    left: 1rem;
+    right: 0.5rem;
+    left: 0.5rem;
     top: 80px;
   }
 }
 
 @media (max-width: 480px) {
+  .app-container {
+    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
   .header-content {
     padding: 0.75rem;
   }
   
   .main-content {
-    padding: 0.75rem;
+    padding: 0.5rem;
+    height: calc(100vh - 70px);
+    overflow: hidden;
   }
   
   .welcome-card {
@@ -444,7 +554,22 @@
   }
   
   .chat-interface {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 70px);
+    min-height: calc(100vh - 70px);
     border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .chat-top-bar {
+    padding: 0.5rem 0.75rem;
+    min-height: 60px;
+  }
+  
+  .room-details h3 {
+    font-size: 0.9rem;
+  }
+  
+  .user-name {
+    font-size: 0.75rem;
   }
 }
