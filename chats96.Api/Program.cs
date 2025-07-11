@@ -13,6 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
+
+
+
 
 // Configure PostgreSQL DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -37,6 +41,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
 
 // Apply migrations on startup (for development/testing)
 // In production, you might use a separate migration tool or script.
@@ -65,7 +70,7 @@ if (app.Environment.IsDevelopment())
 // For production, if you are serving from an ingress controller that handles HTTPS,
 // you might not need app.UseHttpsRedirection() here.
 // app.UseHttpsRedirection();
-
+app.MapHealthChecks("/health");
 app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthorization();
