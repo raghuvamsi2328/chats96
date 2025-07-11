@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  backendUrl: 'http://localhost:5024' // Your local backend URL from docker-compose
+  backendUrl: 'https://chatapi.server96.com' // Your local backend URL from docker-compose
 };
