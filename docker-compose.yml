@@ -37,7 +37,7 @@ services:
       POSTGRES_USER: chatuser
       POSTGRES_PASSWORD: chatpassword
     ports:
-      - "5432:5432"  # Expose PostgreSQL port to localhost
+      - "5433:5432"  # Expose PostgreSQL port 5432 internally to port 5433 externally
     volumes:
       - chat_db_data:/var/lib/postgresql/data # Persistent storage for database data
     networks:

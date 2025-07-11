@@ -1,0 +1,59 @@
+# Alternative Docker Compose Configuration
+# Use this if you need to avoid port conflicts
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: chats96.Api/Dockerfile
+    ports:
+      - "5001:80"  # API will be available on port 5001
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=database;Port=5432;Username=chatuser;Password=chatpassword;Database=chatdb"
+    depends_on:
+      - database
+    networks:
+      - chat-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./chats96App
+      dockerfile: Dockerfile
+    ports:
+      - "4201:80"  # Frontend will be available on port 4201
+    depends_on:
+      - backend
+    networks:
+      - chat-network
+    restart: unless-stopped
+
+  database:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: chatdb
+      POSTGRES_USER: chatuser
+      POSTGRES_PASSWORD: chatpassword
+    ports:
+      - "5433:5432"  # PostgreSQL exposed on port 5433 (external) -> 5432 (internal)
+    volumes:
+      - chat_db_data:/var/lib/postgresql/data
+    networks:
+      - chat-network
+    restart: unless-stopped
+
+volumes:
+  chat_db_data:
+
+networks:
+  chat-network:
+    driver: bridge
+
+# Port Summary:
+# - Frontend: http://your-server:4201
+# - Backend API: http://your-server:5001
+# - Database: localhost:5433 (for external connections)
+# - Internal database connection uses port 5432 (within Docker network)
