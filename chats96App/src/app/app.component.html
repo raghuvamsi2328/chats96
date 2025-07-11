@@ -1,40 +1,118 @@
-<div class="container">
-  <header>
-    <h1>Simple Chat App</h1>
-    <button (click)="toggleTheme()" class="theme-toggle">
-      {{ theme() === 'light-theme' ? '☀️ Light' : '🌙 Dark' }}
-    </button>
+<div class="app-container">
+  <!-- Header Bar -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="app-title">
+        <i class="chat-icon">💬</i>
+        <h1>chats96</h1>
+      </div>
+      <button (click)="toggleTheme()" class="theme-toggle">
+        <span class="theme-icon">{{ theme() === 'light-theme' ? '🌙' : '☀️' }}</span>
+        <span class="theme-text">{{ theme() === 'light-theme' ? 'Dark' : 'Light' }}</span>
+      </button>
+    </div>
   </header>
 
-  <div *ngIf="!isChatActive" class="initial-setup">
-    <div class="input-group">
-      <label for="chatNameInput">Your Chat Name:</label>
-      <input id="chatNameInput" type="text" [(ngModel)]="chatName" placeholder="e.g., Anonymous Cat" required />
-    </div>
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <!-- Welcome/Setup Screen -->
+    <div *ngIf="!isChatActive" class="welcome-screen">
+      <div class="welcome-card">
+        <div class="welcome-header">
+          <h2>Welcome to chats96</h2>
+          <p>Connect instantly with friends and colleagues</p>
+        </div>
 
-    <div class="actions">
-      <button (click)="createNewChat()" [disabled]="!chatName.trim()">Create New Chat</button>
-      <p class="or-separator">OR</p>
-      <div class="input-group">
-        <label for="joinKeyInput">Join with Key:</label>
-        <input id="joinKeyInput" type="text" [ngModel]="chatRoomKey" (ngModelChange)="setChatRoomKeyManually($event)" placeholder="Paste chat room key" />
-        <button (click)="joinExistingChat()" [disabled]="!chatRoomKey || !chatName.trim()">Join Chat</button>
+        <div class="setup-form">
+          <!-- Name Input -->
+          <div class="input-section">
+            <label for="chatNameInput" class="input-label">
+              <i class="user-icon">👤</i>
+              Display Name
+            </label>
+            <input 
+              id="chatNameInput" 
+              type="text" 
+              [(ngModel)]="chatName" 
+              placeholder="Enter your name"
+              class="form-input"
+              required 
+            />
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-section">
+            <button 
+              (click)="createNewChat()" 
+              [disabled]="!chatName.trim()"
+              class="primary-button create-button">
+              <i class="plus-icon">+</i>
+              Create New Room
+            </button>
+
+            <div class="divider">
+              <span>or</span>
+            </div>
+
+            <!-- Join Existing Chat -->
+            <div class="join-section">
+              <label for="joinKeyInput" class="input-label">
+                <i class="key-icon">🔗</i>
+                Room Key
+              </label>
+              <div class="join-input-group">
+                <input 
+                  id="joinKeyInput" 
+                  type="text" 
+                  [ngModel]="chatRoomKey" 
+                  (ngModelChange)="setChatRoomKeyManually($event)" 
+                  placeholder="Paste room key here"
+                  class="form-input"
+                />
+                <button 
+                  (click)="joinExistingChat()" 
+                  [disabled]="!chatRoomKey || !chatName.trim()"
+                  class="secondary-button join-button">
+                  Join
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div *ngIf="isChatActive" class="chat-area">
-    <div class="chat-header">
-      <h2>Chat Room: {{ chatRoomKey }}</h2>
-      <p>Your Name: {{ chatName }}</p>
-      <button (click)="shareChatRoom()" class="share-button">Share Room Link</button>
+    <!-- Chat Interface -->
+    <div *ngIf="isChatActive" class="chat-interface">
+      <!-- Chat Header -->
+      <div class="chat-top-bar">
+        <div class="room-info">
+          <div class="room-details">
+            <h3 class="room-name">{{ chatRoomKey }}</h3>
+            <span class="user-name">{{ chatName }}</span>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button (click)="shareChatRoom()" class="share-button">
+            <i class="share-icon">📤</i>
+            <span class="share-text">Share</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Window -->
+      <div class="chat-window-container">
+        <app-chat-window
+          [chatRoomKey]="chatRoomKey!"
+          [chatName]="chatName">
+        </app-chat-window>
+      </div>
     </div>
 
-    <app-chat-window
-      [chatRoomKey]="chatRoomKey!"
-      [chatName]="chatName"
-    ></app-chat-window>
-  </div>
-
-  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-toast">
+      <i class="error-icon">⚠️</i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  </main>
 </div>

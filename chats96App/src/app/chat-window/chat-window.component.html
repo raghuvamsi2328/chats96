@@ -1,21 +1,47 @@
 <div class="chat-window">
-  <div class="chat-info">
-      Active Users: {{ activeUsersInRoom }}
-  </div>
-  <div #messagesDisplay class="messages-display">
-    <div *ngFor="let msg of messages" class="message-item">
-      <span class="message-sender">{{ msg.sender }}:</span>
-      <span class="message-content">{{ msg.messageContent }}</span> <span class="message-timestamp">{{ msg.timestamp | date:'shortTime' }}</span>
+  <!-- Active Users Info -->
+  <div class="chat-status-bar">
+    <div class="active-users">
+      <span class="status-indicator"></span>
+      <span class="status-text">{{ activeUsersInRoom }} {{ activeUsersInRoom === 1 ? 'user' : 'users' }} online</span>
     </div>
   </div>
 
-  <div class="message-input-area">
-    <input
-      type="text"
-      [(ngModel)]="newMessage"
-      (keyup.enter)="sendMessage()"
-      placeholder="Type your message..."
-    />
-    <button (click)="sendMessage()" [disabled]="!newMessage.trim() || hubConnection.state !== 'Connected'">Send</button>
+  <!-- Messages Display Area -->
+  <div #messagesDisplay class="messages-container">
+    <div class="messages-list">
+      <div *ngFor="let msg of messages" class="message-wrapper">
+        <div class="message-bubble" [class.own-message]="msg.sender === chatName">
+          <div class="message-header">
+            <span class="sender-name">{{ msg.sender }}</span>
+            <span class="message-time">{{ msg.timestamp | date:'shortTime' }}</span>
+          </div>
+          <div class="message-content">{{ msg.messageContent }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Input Area -->
+  <div class="message-input-container">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        (keyup.enter)="sendMessage()"
+        placeholder="Type a message..."
+        class="message-input"
+        [disabled]="hubConnection.state !== 'Connected'"
+      />
+      <button 
+        (click)="sendMessage()" 
+        [disabled]="!newMessage.trim() || hubConnection.state !== 'Connected'"
+        class="send-button">
+        <i class="send-icon">📤</i>
+      </button>
+    </div>
+    <div class="connection-status" [class.connected]="hubConnection.state === 'Connected'">
+      {{ hubConnection.state === 'Connected' ? 'Connected' : 'Connecting...' }}
+    </div>
   </div>
 </div>

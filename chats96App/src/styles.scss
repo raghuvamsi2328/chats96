@@ -1,90 +1,237 @@
-/* You can add global styles to this file, and also import other style files */
-/* Base styles - apply to all themes */
+/* Global Styles and Theme Variables */
+
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   margin: 0;
   padding: 0;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 /* Light Theme Variables */
 body.light-theme {
-  --background-color: #f0f2f5; /* Overall page background */
-  --background-card: #ffffff; /* Card/container background */
-  --background-secondary: #f9f9f9; /* Chat window background */
-  --background-chat: #f5f7fa; /* Messages display background */
-  --input-area-background: #ffffff; /* Message input background */
-  --message-background: #e0e0e0; /* Default message background */
+  --background-color: #f5f7fa;
+  --background-card: #ffffff;
+  --background-secondary: #f8fafc;
+  --background-chat: #ffffff;
+  --input-area-background: #ffffff;
+  --message-background: #f1f3f4;
+  --message-border: #e1e5e9;
 
-  --text-color: #333333;
-  --primary-color: #007bff;
-  --primary-hover-color: #0056b3;
-  --sender-color: #0056b3;
-  --timestamp-color: #777777;
+  --text-color: #2d3748;
+  --text-secondary: #718096;
+  --primary-color: #3182ce;
+  --primary-hover-color: #2c5aa0;
+  --primary-color-alpha: rgba(49, 130, 206, 0.1);
+  --sender-color: #2b6cb0;
+  --timestamp-color: #a0aec0;
 
-  --border-color: #dddddd;
+  --border-color: #e2e8f0;
   --input-background: #ffffff;
 
-  --button-background: #f0f0f0;
-  --button-text: #333333;
-  --button-border: #cccccc;
-  --button-hover-background: #e0e0e0;
+  --button-background: #f7fafc;
+  --button-text: #4a5568;
+  --button-border: #e2e8f0;
+  --button-hover-background: #edf2f7;
 
-  --share-button-background: #28a745; /* Green */
+  --share-button-background: #38a169;
   --share-button-text: #ffffff;
-  --share-button-border: #218838;
-  --share-button-hover-background: #218838;
+  --share-button-border: #2f855a;
+  --share-button-hover-background: #2f855a;
 
-  --disabled-background: #cccccc;
-  --error-color: #dc3545;
-  --error-background: #f8d7da;
-  --error-border: #f5c6cb;
+  --disabled-background: #e2e8f0;
+  --error-color: #e53e3e;
+  --error-background: #fed7d7;
+  --error-border: #feb2b2;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark Theme Variables */
 body.dark-theme {
-  --background-color: #212121;
-  --background-card: #2f2f2f;
-  --background-secondary: #3c3c3c;
-  --background-chat: #444444;
-  --input-area-background: #2f2f2f;
-  --message-background: #555555;
+  --background-color: #1a202c;
+  --background-card: #2d3748;
+  --background-secondary: #4a5568;
+  --background-chat: #2d3748;
+  --input-area-background: #2d3748;
+  --message-background: #4a5568;
+  --message-border: #718096;
 
-  --text-color: #e0e0e0;
-  --primary-color: #66b3ff;
-  --primary-hover-color: #4da6ff;
-  --sender-color: #88bbff;
-  --timestamp-color: #aaaaaa;
+  --text-color: #f7fafc;
+  --text-secondary: #a0aec0;
+  --primary-color: #63b3ed;
+  --primary-hover-color: #4299e1;
+  --primary-color-alpha: rgba(99, 179, 237, 0.1);
+  --sender-color: #90cdf4;
+  --timestamp-color: #718096;
 
-  --border-color: #555555;
-  --input-background: #3c3c3c;
+  --border-color: #4a5568;
+  --input-background: #4a5568;
 
-  --button-background: #4a4a4a;
-  --button-text: #e0e0e0;
-  --button-border: #666666;
-  --button-hover-background: #5a5a5a;
+  --button-background: #4a5568;
+  --button-text: #f7fafc;
+  --button-border: #718096;
+  --button-hover-background: #718096;
 
-  --share-button-background: #1e7e34; /* Darker Green */
+  --share-button-background: #38a169;
   --share-button-text: #ffffff;
-  --share-button-border: #17642a;
-  --share-button-hover-background: #17642a;
+  --share-button-border: #2f855a;
+  --share-button-hover-background: #2f855a;
 
-  --disabled-background: #555555;
-  --error-color: #ff8888;
-  --error-background: #5c2020;
-  --error-border: #802f2f;
+  --disabled-background: #4a5568;
+  --error-color: #fc8181;
+  --error-background: #742a2a;
+  --error-border: #9b2c2c;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
-/* General button styling */
+/* Focus Styles */
+*:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+button:focus,
+input:focus {
+  outline: none;
+}
+
+/* Button Reset */
 button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
 }
 
 button:disabled {
+  cursor: not-allowed;
   opacity: 0.6;
 }
 
-/* Basic body background from theme */
-body {
-  background-color: var(--background-color);
+/* Input Reset */
+input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+/* Utility Classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Scrollbar Styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease;
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease;
+}
+
+/* Responsive Text Sizing */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
 }
