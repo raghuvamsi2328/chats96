@@ -65,8 +65,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
   private initializeSignalR(): void {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${environment.backendUrl}/chatsHub`, {
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
+        // skipNegotiation: true,
+        // transport: signalR.HttpTransportType.WebSockets
+         withCredentials: true
       })
       .withAutomaticReconnect()
       .build();

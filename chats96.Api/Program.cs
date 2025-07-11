@@ -76,6 +76,7 @@ if (app.Environment.IsDevelopment())
 // you might not need app.UseHttpsRedirection() here.
 // app.UseHttpsRedirection();
 app.MapHealthChecks("/health");
+app.UseWebSockets();
 app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthorization();

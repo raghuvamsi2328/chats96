@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  backendUrl: 'https://chatapi.server96.com' // Domain url
+  backendUrl: 'http://chatapi.server96.com' // Domain url
 };
