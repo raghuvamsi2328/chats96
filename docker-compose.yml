@@ -36,11 +36,10 @@ services:
       POSTGRES_DB: chatdb
       POSTGRES_USER: chatuser
       POSTGRES_PASSWORD: chatpassword
+    ports:
+      - "5432:5432"  # Expose PostgreSQL port to localhost
     volumes:
       - chat_db_data:/var/lib/postgresql/data # Persistent storage for database data
-    # You generally don't need to expose DB to host here, unless for direct debugging
-    # If you remove it, '5432' on your host is free.
-    # If you add it for debugging, pick an unused host port, e.g., - "5433:5432"
     networks:
       - chat-network
     restart: unless-stopped

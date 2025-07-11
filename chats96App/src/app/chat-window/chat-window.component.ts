@@ -70,6 +70,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
          withCredentials: true
       })
       .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
     this.hubConnection.on('ReceiveMessage', (message: ChatMessage) => {
@@ -110,6 +111,35 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
             this.messages.push(leftMessage);
             this.activeUsersInRoom = activeUsers;
         }
+    });
+
+    // Handle errors from the server
+    this.hubConnection.on('Error', (errorMessage: string) => {
+      console.error('SignalR Error from server:', errorMessage);
+      const errorMsg: ChatMessage = {
+        sender: 'System',
+        messageContent: `Error: ${errorMessage}`,
+        timestamp: new Date()
+      };
+      this.messages.push(errorMsg);
+    });
+
+    // Handle connection errors
+    this.hubConnection.onclose((error) => {
+      console.error('SignalR connection closed:', error);
+    });
+
+    this.hubConnection.onreconnecting((error) => {
+      console.warn('SignalR reconnecting:', error);
+    });
+
+    this.hubConnection.onreconnected((connectionId) => {
+      console.log('SignalR reconnected:', connectionId);
+      // Rejoin the room after reconnection
+      if (this.chatInitialized) {
+        this.hubConnection.invoke('JoinChatRoom', this.chatRoomKey, this.chatName)
+          .catch(err => console.error('Error rejoining chat room after reconnection:', err));
+      }
     });
 
 
