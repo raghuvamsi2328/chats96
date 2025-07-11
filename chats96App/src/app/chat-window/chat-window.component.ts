@@ -10,6 +10,7 @@ interface ChatMessage {
   messageContent: string; // Updated property name to match .NET model
   timestamp: Date;
   chatRoomKey?: string;
+  messageType?: 'user' | 'system' | 'notification'; // Add message type
 }
 
 @Component({
@@ -99,7 +100,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
         const joinMessage: ChatMessage = {
           sender: 'System',
           messageContent: `${chatName} has joined the room.`, // Use messageContent
-          timestamp: new Date()
+          timestamp: new Date(),
+          messageType: 'system'
         };
         this.messages.push(joinMessage);
         this.activeUsersInRoom = activeUsers; // Update active user count
@@ -112,7 +114,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
             const leftMessage: ChatMessage = {
                 sender: 'System',
                 messageContent: `${chatName} has left the room.`,
-                timestamp: new Date()
+                timestamp: new Date(),
+                messageType: 'system'
             };
             this.messages.push(leftMessage);
             this.activeUsersInRoom = activeUsers;
@@ -153,6 +156,15 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
       .then(() => {
         console.log('SignalR connection started.');
         if (!this.chatInitialized) {
+          // Add welcome system message
+          const welcomeMessage: ChatMessage = {
+            sender: 'System',
+            messageContent: `Welcome to the chat room, ${this.chatName}!`,
+            timestamp: new Date(),
+            messageType: 'system'
+          };
+          this.messages.push(welcomeMessage);
+          
           // Pass chatName to JoinChatRoom
           this.hubConnection.invoke('JoinChatRoom', this.chatRoomKey, this.chatName)
             .then(() => {
@@ -170,7 +182,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
       const messageToSend: ChatMessage = {
         sender: this.chatName,
         messageContent: this.newMessage.trim(),
-        timestamp: new Date()
+        timestamp: new Date(),
+        messageType: 'user'
       };
 
       this.hubConnection.invoke('SendMessage', this.chatRoomKey, messageToSend)
@@ -181,5 +194,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     } else if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
       console.warn('SignalR connection not established. Cannot send message.');
     }
+  }
+
+  // Auto-adjust textarea height based on content
+  adjustTextareaHeight(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; // Max height of 120px
+  }
+
+  // Helper method to determine if a message is a system message
+  isSystemMessage(message: ChatMessage): boolean {
+    return message.messageType === 'system' || message.messageType === 'notification';
   }
 }
