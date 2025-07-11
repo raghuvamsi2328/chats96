@@ -34,6 +34,8 @@ builder.Services.AddCors(options =>
             "http://localhost:62499",
             "http://192.168.1.16:4201",
             // Add your deployed frontend URL here when known for testing
+            "http://chatapi.server96.com", // Example deployed Angular URL
+            "https://chatapi.server96.com", // Example deployed Angular URL with HTTPS
             "http://chat.server96.com", // Example deployed Angular URL
             "https://chat.server96.com" // Example deployed Angular URL with HTTPS
         )
