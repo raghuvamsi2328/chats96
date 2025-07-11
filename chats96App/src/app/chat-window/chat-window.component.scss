@@ -5,6 +5,7 @@
   height: 100%;
   background-color: var(--background-secondary);
   overflow: hidden;
+  position: relative;
 }
 
 /* Status Bar */
@@ -13,6 +14,7 @@
   background-color: var(--background-chat);
   border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
+  z-index: 1;
 }
 
 .active-users {
@@ -40,28 +42,32 @@
   font-weight: 500;
 }
 
-/* Messages Container */
+/* Messages Container - Takes remaining space minus input height */
 .messages-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background-color: var(--background-chat);
-  min-height: 0; /* Important for flex children */
+  min-height: 0;
+  /* Reserve space for input container */
+  margin-bottom: 80px;
 }
 
 .messages-list {
   flex: 1;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.5rem 2rem 1.5rem; /* Extra bottom padding for messages */
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   min-height: 0;
+  height: 100%;
   
   /* Better scrolling on mobile */
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
   
   /* Custom scrollbar */
   &::-webkit-scrollbar {
@@ -164,25 +170,23 @@
   }
 }
 
-/* Message Input Container - Non-fixed positioning */
+/* Message Input Container - Fixed at bottom */
 .message-input-container {
   background-color: var(--input-area-background);
   border-top: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-  
-  /* Non-fixed positioning for better responsive behavior */
-  min-height: fit-content;
-  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  min-height: 80px;
   
   /* Mobile responsive adjustments */
   @media (max-width: 768px) {
     padding: 0.75rem 1rem;
-    /* Remove sticky positioning for better mobile experience */
-    position: relative;
-    bottom: auto;
+    /* Add safe area for mobile devices */
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -370,7 +374,7 @@
   }
   
   .messages-list {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1rem 3rem 1rem; /* Extra bottom padding for mobile */
     gap: 0.5rem;
   }
   
@@ -381,10 +385,14 @@
   
   .message-input-container {
     padding: 0.75rem 1rem;
-    /* Ensure it stays visible on mobile keyboards */
-    position: sticky;
+    /* Ensure it stays at bottom on mobile */
+    position: fixed;
     bottom: 0;
+    left: 0;
+    right: 0;
     background-color: var(--input-area-background);
+    border-top: 1px solid var(--border-color);
+    z-index: 1000;
   }
   
   .input-wrapper {
@@ -398,32 +406,12 @@
 }
 
 @media (max-width: 480px) {
-  .chat-window {
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-  
   .chat-status-bar {
     padding: 0.5rem 0.75rem;
-    position: relative;
-    z-index: 1;
-  }
-  
-  .messages-container {
-    /* Specific mobile handling - account for status bar and input */
-    height: calc(100% - 120px); /* Adjust based on status bar + input heights */
-    overflow: hidden;
-    position: relative;
   }
   
   .messages-list {
-    padding: 0.5rem 0.75rem 5rem 0.75rem; /* Extra bottom padding for input */
-    /* Important: prevent iOS bounce scrolling issues */
-    -webkit-overflow-scrolling: touch;
-    overflow-y: scroll;
-    height: 100%;
-    position: relative;
+    padding: 0.5rem 0.75rem 4rem 0.75rem; /* Even more bottom padding for small screens */
   }
   
   .message-bubble {
@@ -437,36 +425,6 @@
   
   .message-input-container {
     padding: 0.75rem;
-    /* Mobile keyboard handling */
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: var(--input-area-background);
-    border-top: 1px solid var(--border-color);
-    z-index: 1000;
-  }
-  
-  .input-wrapper {
-    border-radius: 8px;
-  }
-  
-  .message-input {
-    /* Better mobile input */
-    font-size: 16px; /* Prevents zoom on iOS */
-    padding: 0.75rem;
-  }
-  
-  .send-button {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-/* Special handling for very small screens */
-@media (max-width: 360px) {
-  .message-input-container {
-    padding: 0.5rem;
   }
   
   .message-input {

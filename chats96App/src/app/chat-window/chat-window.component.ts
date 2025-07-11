@@ -59,10 +59,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
     try {
       if (this.messagesDisplayRef?.nativeElement) {
         const element = this.messagesDisplayRef.nativeElement;
-        // Use a small timeout to ensure DOM is updated
-        setTimeout(() => {
+        // Use requestAnimationFrame for smoother scrolling
+        requestAnimationFrame(() => {
           element.scrollTop = element.scrollHeight;
-        }, 0);
+        });
       }
     } catch(err) {
       // console.error('Could not scroll to bottom:', err);
@@ -189,6 +189,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
       this.hubConnection.invoke('SendMessage', this.chatRoomKey, messageToSend)
         .then(() => {
           this.newMessage = '';
+          // Reset textarea height after sending
+          const textarea = document.querySelector('.message-input') as HTMLTextAreaElement;
+          if (textarea) {
+            textarea.style.height = 'auto';
+          }
         })
         .catch(err => console.error('Error invoking SendMessage:', err));
     } else if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
