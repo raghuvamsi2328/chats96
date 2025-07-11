@@ -15,7 +15,7 @@ RUN npm run build --output-path=./dist --configuration=production
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html 
+COPY --from=build /app/dist/chats96-app/browser /usr/share/nginx/html
 # Copy the built files to Nginx's serving directory
 EXPOSE 80 
 # Nginx runs on port 80 inside the container
