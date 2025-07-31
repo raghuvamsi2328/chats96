@@ -41,7 +41,7 @@ A modern, real-time chat application built with ASP.NET Core, Angular, and Signa
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/raghuvamsi2328/chats96.git
    cd chats96
    ```
 
