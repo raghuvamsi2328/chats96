@@ -21,5 +21,23 @@ namespace chats96.Api.Models
 
         // Last activity timestamp for cleanup
         public DateTime LastActivity { get; set; } = DateTime.UtcNow;
+
+        // PIN protection for the room (optional)
+        [MaxLength(10)]
+        public string? RoomPin { get; set; } = null;
+
+        // Room expiry date (optional - if null, room doesn't expire)
+        public DateTime? ExpiresAt { get; set; } = null;
+
+        // Room title/name for better UX
+        [MaxLength(100)]
+        public string? RoomTitle { get; set; } = null;
+
+        // Creator's name for room management
+        [MaxLength(100)]
+        public string? CreatedBy { get; set; } = null;
+
+        // Flag to indicate if room should persist even when empty
+        public bool IsPersistent { get; set; } = false;
     }
 }

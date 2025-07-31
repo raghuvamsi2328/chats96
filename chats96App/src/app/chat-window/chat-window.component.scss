@@ -50,13 +50,18 @@
   overflow: hidden;
   background-color: var(--background-chat);
   min-height: 0;
-  /* Reserve space for input container */
-  margin-bottom: 80px;
+  /* Reserve space for fixed input container */
+  margin-bottom: 100px; /* Increased to account for fixed input */
+  
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    margin-bottom: 120px; /* More space on mobile for keyboard */
+  }
 }
 
 .messages-list {
   flex: 1;
-  padding: 1rem 1.5rem 2rem 1.5rem; /* Extra bottom padding for messages */
+  padding: 1rem 1.5rem 3rem 1.5rem; /* Extra bottom padding for fixed input */
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -175,17 +180,30 @@
   background-color: var(--input-area-background);
   border-top: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 100;
-  min-height: 80px;
+  z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
   
-  /* Mobile responsive adjustments */
+  /* Ensure it stays within the chat interface */
+  @media (min-width: 769px) {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+  
+  /* Mobile specific positioning */
   @media (max-width: 768px) {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     padding: 0.75rem 1rem;
-    /* Add safe area for mobile devices */
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
@@ -373,8 +391,13 @@
     padding: 0.5rem 1rem;
   }
   
+  .messages-container {
+    /* More space for fixed input on mobile */
+    margin-bottom: 140px;
+  }
+  
   .messages-list {
-    padding: 0.75rem 1rem 3rem 1rem; /* Extra bottom padding for mobile */
+    padding: 0.75rem 1rem 4rem 1rem; /* Extra bottom padding for fixed input */
     gap: 0.5rem;
   }
   

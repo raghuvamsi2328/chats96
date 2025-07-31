@@ -24,7 +24,7 @@ namespace chats96.Api.Hubs
         }
 
         // Method for clients to join a specific chat room group
-        public async Task JoinChatRoom(string chatRoomKey, string chatName)
+        public async Task JoinChatRoom(string chatRoomKey, string chatName, string? roomPin = null)
         {
             try
             {
@@ -45,48 +45,73 @@ namespace chats96.Api.Hubs
 
                 _logger.LogInformation($"[SignalR] Connection {Context.ConnectionId} ({chatName}) attempting to join room: {chatRoomKey}");
 
-                // Track this connection to the room for cleanup on disconnect
-                UserConnectionTracker.ConnectionToRoomMap.TryAdd(Context.ConnectionId, chatRoomKey);
-
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                    // 1. Get or Create ChatRoom in DB
+                    // 1. Get ChatRoom from DB (don't create automatically anymore)
                     var chatRoom = await dbContext.ChatRooms
                                                  .FirstOrDefaultAsync(cr => cr.ChatRoomKey == chatRoomKey);
 
                     if (chatRoom == null)
                     {
-                        chatRoom = new ChatRoom { ChatRoomKey = chatRoomKey };
-                        dbContext.ChatRooms.Add(chatRoom);
-                        await dbContext.SaveChangesAsync();
-                        _logger.LogInformation($"[SignalR] Created new chat room in DB: {chatRoomKey}");
+                        await Clients.Caller.SendAsync("Error", "Chat room not found. Please check the room key.");
+                        return;
                     }
 
-                    // 2. Increment active user count (in-memory for real-time tracking)
+                    // 2. Check if room has expired
+                    if (chatRoom.ExpiresAt.HasValue && chatRoom.ExpiresAt.Value <= DateTime.UtcNow)
+                    {
+                        await Clients.Caller.SendAsync("Error", "This chat room has expired and is no longer accessible.");
+                        return;
+                    }
+
+                    // 3. Check PIN if required
+                    if (!string.IsNullOrWhiteSpace(chatRoom.RoomPin))
+                    {
+                        if (string.IsNullOrWhiteSpace(roomPin) || roomPin != chatRoom.RoomPin)
+                        {
+                            await Clients.Caller.SendAsync("Error", "Invalid or missing PIN for this room.");
+                            await Clients.Caller.SendAsync("PinRequired", chatRoomKey);
+                            return;
+                        }
+                    }
+
+                    // Track this connection to the room for cleanup on disconnect
+                    UserConnectionTracker.ConnectionToRoomMap.TryAdd(Context.ConnectionId, chatRoomKey);
+
+                    // 4. Increment active user count (in-memory for real-time tracking)
                     _activeUserCounts.AddOrUpdate(chatRoomKey, 1, (key, count) => count + 1);
 
-                    // Update DB count (more persistent tracking, though in-memory is faster for hub)
+                    // Update DB count and last activity
                     chatRoom.ActiveUsers = _activeUserCounts[chatRoomKey];
-                    chatRoom.LastActivity = DateTime.UtcNow; // Update last activity
+                    chatRoom.LastActivity = DateTime.UtcNow; 
                     await dbContext.SaveChangesAsync();
 
-                    // 3. Add connection to SignalR group
+                    // 5. Add connection to SignalR group
                     await Groups.AddToGroupAsync(Context.ConnectionId, chatRoomKey);
 
-                    // 4. Notify everyone in the group
-                    await Clients.Group(chatRoomKey).SendAsync("UserJoined", chatName, chatRoomKey, chatRoom.ActiveUsers);
+                    // 6. Notify everyone in the group with room info
+                    await Clients.Group(chatRoomKey).SendAsync("UserJoined", chatName, chatRoomKey, chatRoom.ActiveUsers, chatRoom.RoomTitle);
                     _logger.LogInformation($"[SignalR] Connection {Context.ConnectionId} ({chatName}) joined room: {chatRoomKey}. Active users: {chatRoom.ActiveUsers}");
 
-                    // 5. Send historical messages to the newly joined user
+                    // 7. Send room info and historical messages to the newly joined user
+                    await Clients.Caller.SendAsync("RoomJoined", new 
+                    { 
+                        roomKey = chatRoomKey,
+                        roomTitle = chatRoom.RoomTitle,
+                        createdBy = chatRoom.CreatedBy,
+                        expiresAt = chatRoom.ExpiresAt,
+                        activeUsers = chatRoom.ActiveUsers
+                    });
+
                     var historicalMessages = await dbContext.ChatMessages
                                                             .Where(cm => cm.ChatRoomKey == chatRoomKey)
                                                             .OrderBy(cm => cm.Timestamp)
-                                                            .Select(cm => new ChatMessage // Project to ChatMessage type used by client
+                                                            .Select(cm => new ChatMessage
                                                             {
                                                                 Sender = cm.Sender,
-                                                                MessageContent = cm.MessageContent, // Use MessageContent
+                                                                MessageContent = cm.MessageContent,
                                                                 Timestamp = cm.Timestamp,
                                                                 ChatRoomKey = cm.ChatRoomKey
                                                             })
@@ -253,23 +278,30 @@ namespace chats96.Api.Hubs
                             await dbContext.SaveChangesAsync();
                             _logger.LogInformation($"[SignalR] Room {chatRoomKey} active users updated to: {chatRoom.ActiveUsers}");
 
-                            // Cleanup logic: If active users become 0, schedule deletion
+                            // Cleanup logic: If active users become 0, check if room should be deleted
                             if (chatRoom.ActiveUsers <= 0)
                             {
-                                _logger.LogInformation($"[SignalR] Room {chatRoomKey} has 0 active users. Scheduling for deletion.");
-                                // Instead of immediate deletion, which might be risky with temporary disconnects,
-                                // we'll use a timer or a background service to clean up after a delay.
-                                // For this example, let's just delete it immediately for demonstration.
-                                // In a real app: Use a background service that periodically checks LastActivity + a grace period.
+                                // Only delete non-persistent rooms or expired rooms
+                                bool shouldDelete = !chatRoom.IsPersistent || 
+                                    (chatRoom.ExpiresAt.HasValue && chatRoom.ExpiresAt.Value <= DateTime.UtcNow);
 
-                                // Immediate deletion for demo purposes (NOT FOR PROD WITHOUT GRACE PERIOD!)
-                                var messagesToDelete = await dbContext.ChatMessages
-                                                                    .Where(cm => cm.ChatRoomKey == chatRoomKey)
-                                                                    .ToListAsync();
-                                dbContext.ChatMessages.RemoveRange(messagesToDelete);
-                                dbContext.ChatRooms.Remove(chatRoom);
-                                await dbContext.SaveChangesAsync();
-                                _logger.LogInformation($"[SignalR] Room {chatRoomKey} and its messages deleted due to no active users.");
+                                if (shouldDelete)
+                                {
+                                    _logger.LogInformation($"[SignalR] Room {chatRoomKey} has 0 active users and is not persistent. Scheduling for deletion.");
+                                    
+                                    // Delete messages and room
+                                    var messagesToDelete = await dbContext.ChatMessages
+                                                                        .Where(cm => cm.ChatRoomKey == chatRoomKey)
+                                                                        .ToListAsync();
+                                    dbContext.ChatMessages.RemoveRange(messagesToDelete);
+                                    dbContext.ChatRooms.Remove(chatRoom);
+                                    await dbContext.SaveChangesAsync();
+                                    _logger.LogInformation($"[SignalR] Room {chatRoomKey} and its messages deleted due to no active users and non-persistent settings.");
+                                }
+                                else
+                                {
+                                    _logger.LogInformation($"[SignalR] Room {chatRoomKey} has 0 active users but is persistent. Keeping room and messages.");
+                                }
                             }
                         }
                     }

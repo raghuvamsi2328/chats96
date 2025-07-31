@@ -23,6 +23,7 @@ interface ChatMessage {
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked {
   @Input() chatRoomKey!: string;
   @Input() chatName!: string;
+  @Input() roomPin?: string; // Add optional PIN input
 
   messages: ChatMessage[] = [];
   newMessage: string = '';
@@ -31,7 +32,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
 
   @ViewChild('messagesDisplay') private messagesDisplayRef!: ElementRef;
 
-  activeUsersInRoom: number = 0; // New property to display active users
+  activeUsersInRoom: number = 0;
 
   constructor() { }
 
@@ -146,7 +147,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
       console.log('SignalR reconnected:', connectionId);
       // Rejoin the room after reconnection
       if (this.chatInitialized) {
-        this.hubConnection.invoke('JoinChatRoom', this.chatRoomKey, this.chatName)
+        this.hubConnection.invoke('JoinChatRoom', this.chatRoomKey, this.chatName, this.roomPin)
           .catch(err => console.error('Error rejoining chat room after reconnection:', err));
       }
     });
@@ -165,8 +166,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewChecked 
           };
           this.messages.push(welcomeMessage);
           
-          // Pass chatName to JoinChatRoom
-          this.hubConnection.invoke('JoinChatRoom', this.chatRoomKey, this.chatName)
+          // Pass chatName and roomPin to JoinChatRoom
+          this.hubConnection.invoke('JoinChatRoom', this.chatRoomKey, this.chatName, this.roomPin)
             .then(() => {
               console.log(`Joined chat room group: ${this.chatRoomKey}`);
               this.chatInitialized = true;
